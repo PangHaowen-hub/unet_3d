@@ -1,0 +1,6 @@
+
+*.dcm
+*.nii
+*.xml
+*.iml
+*.pyc
