@@ -5,6 +5,7 @@ import SimpleITK as sitk
 import numpy as np
 from torchvision.transforms import transforms
 
+
 def nii2numpy(nii_path):
     itk_img = sitk.ReadImage(nii_path)
     img = sitk.GetArrayFromImage(itk_img)

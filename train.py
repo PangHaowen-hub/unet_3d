@@ -1,11 +1,12 @@
 import torch
 import argparse
 import unet3d
+import Unet
 from torch import optim
 from dataset import MyDataset
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
-
+import torch.nn as nn
 
 
 def train(model):
@@ -37,6 +38,7 @@ def train(model):
         torch.save(model.state_dict(), 'epoch_%d.pth' % epoch)
 
 
+'''
 def test(model):
     model.eval()
     model.load_state_dict(torch.load(args.load, map_location='cuda'))
@@ -49,11 +51,14 @@ def test(model):
             img_y = torch.squeeze(y).to('cpu').numpy() > 0.5
             plt.imsave(str(k) + '.png', img_y, format='png', cmap='gray')
             k = k + 1
-
+'''
 
 if __name__ == '__main__':
+    torch.cuda.set_device(3)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = unet3d.UNet3D().to(device)
+    # model = unet3d.UNet3D().to(device)
+    model = Unet.UNet(1, [16, 24, 32, 48, 64], 3, net_mode='3d', conv_block=Unet.RecombinationBlock).to(device)
+    # model = nn.parallel.DataParallel(model, device_ids=[0, 1, 2, 3])
     parser = argparse.ArgumentParser()
     parser.add_argument('--type', dest='type', type=str, default='train', help='train or test')
     parser.add_argument('--batch_size', dest='batch_size', type=int, default=1, help='batch_size')
